@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Details Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="email"], input[type="number"], button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+            font-size: larger;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .success-message {
+            color: green;
+            font-size: larger;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Teacher Details Form</h1>
+    <form action="/classDetails" method="post">
+        <label for="NoOfClasses">Number of Classes:</label>
+        <input type="number" id="NoOfClasses" name="NoOfClasses" required>
+        <div id="ClassDetails"></div>
+        <button type="button" onclick="generateClassDetails()">Next</button>
+        <button type="submit">Submit</button>
+        <div style="color:red; font-size: larger; display: flex; justify-content: center; align-items: center; margin-top: 1rem;"
+             th:if="${errorMessage}" class="error"
+             th:text="${errorMessage}"></div>
+        <div style="color:red; font-size: larger; display: flex; justify-content: center; align-items: center; margin-top: 1rem;"
+             th:if="${successMessage}" class="error"
+             th:text="${successMessage}"></div>
+    </form>
+</div>
+
+<script>
+    function generateClassDetails() {
+        let NoOfClasses = parseInt(document.getElementById('NoOfClasses').value);
+        let classDetailsDiv = document.getElementById('ClassDetails');
+        classDetailsDiv.innerHTML = '';
+        for (let i = 1; i <= NoOfClasses; i++) {
+            let classForm = `
+            <h2>Class ${i} Details</h2>
+            <label for="ClassName_${i}">Class Name:</label>
+            <input type="text" id="ClassName_${i}" name="ClassName_${i}" required>
+            <label for="NoOfDivisions_${i}">Number of Divisions:</label>
+            <input type="number" id="NoOfDivisions_${i}" name="NoOfDivisions_${i}" required onchange="generateDivisionDetails(${i})">
+            <div id="Divisions_${i}"></div>
+            `;
+            classDetailsDiv.innerHTML += classForm;
+        }
+    }
+
+    function generateDivisionDetails(classIndex) {
+        let numDivisions = parseInt(document.getElementById(`NoOfDivisions_${classIndex}`).value);
+        let divisionsDiv = document.getElementById(`Divisions_${classIndex}`);
+        divisionsDiv.innerHTML = '';
+
+        for (let j = 1; j <= numDivisions; j++) {
+            let divisionForm = `
+            <h3>Division ${j} Details</h3>
+            <label for="DivisionName_${classIndex}_${j}">Division Name:</label>
+            <input type="text" id="DivisionName_${classIndex}_${j}" name="DivisionName_${classIndex}_${j}" required>
+            <label for="NoOfTeachers_${classIndex}_${j}">Number of Teachers:</label>
+            <input type="number" id="NoOfTeachers_${classIndex}_${j}" name="NoOfTeachers_${classIndex}_${j}" required onchange="generateTeacherDetails(${classIndex}, ${j})">
+            <div id="Teachers_${classIndex}_${j}"></div>
+            `;
+            divisionsDiv.innerHTML += divisionForm;
+        }
+    }
+
+    function generateTeacherDetails(classIndex, divisionIndex) {
+        let numTeachers = parseInt(document.getElementById(`NoOfTeachers_${classIndex}_${divisionIndex}`).value);
+        let teachersDiv = document.getElementById(`Teachers_${classIndex}_${divisionIndex}`);
+        teachersDiv.innerHTML = '';
+
+        for (let k = 1; k <= numTeachers; k++) {
+            let teacherForm = `
+        <h4>Teacher ${k} Details</h4>
+        <label for="firstName_${classIndex}_${divisionIndex}_${k}">First Name:</label>
+        <input type="text" id="firstName_${classIndex}_${divisionIndex}_${k}" name="firstName_${classIndex}_${divisionIndex}_${k}" required>
+        <label for="lastName_${classIndex}_${divisionIndex}_${k}">Last Name:</label>
+        <input type="text" id="lastName_${classIndex}_${divisionIndex}_${k}" name="lastName_${classIndex}_${divisionIndex}_${k}" required>
+        <label for="email_${classIndex}_${divisionIndex}_${k}">Email:</label>
+        <input type="email" id="email_${classIndex}_${divisionIndex}_${k}" name="email_${classIndex}_${divisionIndex}_${k}" required>
+        <label for="NoOfSubjects_${classIndex}_${divisionIndex}_${k}">Number of Subjects:</label>
+        <input type="number" id="NoOfSubjects_${classIndex}_${divisionIndex}_${k}" name="NoOfSubjects_${classIndex}_${divisionIndex}_${k}" required onchange="generateSubjectInputs(${classIndex},${divisionIndex},${k})">
+        <div id="SubjectInputs_${classIndex}_${divisionIndex}_${k}"></div>
+        `;
+            teachersDiv.innerHTML += teacherForm;
+        }
+    }
+
+    function generateSubjectInputs(classIndex, divisionIndex, teacherIndex) {
+        let numSubjects = parseInt(document.getElementById(`NoOfSubjects_${classIndex}_${divisionIndex}_${teacherIndex}`).value);
+        let subjectInputsDiv = document.getElementById(`SubjectInputs_${classIndex}_${divisionIndex}_${teacherIndex}`);
+        subjectInputsDiv.innerHTML = '';
+
+        for (let m = 1; m <= numSubjects; m++) {
+            let subjectInput = `
+        <label for="subject_${classIndex}_${divisionIndex}_${teacherIndex}_${m}">Subject ${m} Name:</label>
+        <input type="text" id="subject_${classIndex}_${divisionIndex}_${teacherIndex}_${m}" name="subject_${classIndex}_${divisionIndex}_${teacherIndex}_${m}" required>
+        `;
+            subjectInputsDiv.innerHTML += subjectInput;
+        }
+    }
+
+
+</script>
+</body>
+</html>

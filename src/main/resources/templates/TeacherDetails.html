@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Details Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="email"], input[type="number"], button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+            font-size: larger;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .success-message {
+            color: green;
+            font-size: larger;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Teacher Details Form</h1>
+    <form action="/teacherDetails" method="get">
+        <label for="NoOfTeacher">Number of Teachers:</label>
+        <input type="number" id="NoOfTeacher" name="NoOfTeacher" required>
+        <div id="ClassesDetails"></div>
+        <div id="DivisionDetails"></div>
+        <button type="submit">Submit</button>
+        <div id="errorMessage" class="error-message" th:text="${errorMessage}"></div>
+        <div id="successMessage" class="success-message" th:text="${successMessage}"></div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('NoOfTeacher').addEventListener('input', function () {
+        let NoOfTeacher = parseInt(this.value);
+        let teacherDetailsDiv = document.getElementById('ClassesDetails');
+        teacherDetailsDiv.innerHTML = '';
+        for (let i = 0; i < NoOfTeacher; i++) {
+            let teacherForm = `
+            <label for="firstName_${i}">First Name:</label>
+            <input type="text" id="firstName_${i}" name="firstName_${i}" required>
+            <label for="lastName_${i}">Last Name:</label>
+            <input type="text" id="lastName_${i}" name="lastName_${i}" required>
+            <label for="email_${i}">Email:</label>
+            <input type="email" id="email_${i}" name="email_${i}" required>
+            <label for="NoOfSubject_${i}">Number of Subjects:</label>
+            <input type="number" id="NoOfSubject_${i}" name="NoOfSubject_${i}" required onchange="addSubjects(${i})">
+            <div id="subjects_${i}"></div>
+            `;
+            teacherDetailsDiv.innerHTML += teacherForm;
+        }
+    });
+
+    function addSubjects(i) {
+        let numSubjects = parseInt(document.getElementById(`NoOfSubject_${i}`).value);
+        let subjectsDiv = document.getElementById(`subjects_${i}`);
+        subjectsDiv.innerHTML = '';
+
+        for (let j = 0; j < numSubjects; j++) {
+            let labelElement = document.createElement('label');
+            labelElement.setAttribute('for', 'Subject_' + i + '_' + j);
+            labelElement.textContent = "Name of Subject " + (i + 1) + ":";
+            let subjectSelect = document.createElement('input');
+            subjectSelect.setAttribute('id', 'Subject_' + i + '_' + j);
+            subjectSelect.type = 'text';
+            subjectSelect.setAttribute('name', 'Subject_' + i + '_' + j);
+            subjectSelect.setAttribute('required', true);
+
+            // Assuming the backend returns subject names
+            subjectsDiv.appendChild(labelElement);
+            subjectsDiv.appendChild(subjectSelect);
+
+        }
+
+
+    }
+
+    // Parse successMessage and errorMessage from query params
+    const urlParams = new URLSearchParams(window.location.search);
+    const successMessage = urlParams.get('successMessage');
+    const errorMessage = urlParams.get('errorMessage');
+
+    // Display messages if present
+    if (successMessage) {
+        document.getElementById('successMessage').textContent = successMessage;
+    } else if (errorMessage) {
+        document.getElementById('errorMessage').textContent = errorMessage;
+    }
+</script>
+</body>
+</html>

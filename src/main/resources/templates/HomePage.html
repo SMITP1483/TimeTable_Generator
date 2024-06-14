@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teaching Assignment Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="number"], input[type="text"], button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Teaching Assignment Form</h1>
+    <form action="/teachingAssignment" method="get">
+        <label for="NoOfTeachingAssignments">Number of Teaching Assignments:</label>
+        <input type="number" id="NoOfTeachingAssignments" name="NoOfTeachingAssignments" required>
+        <div id="teachingAssignments"></div>
+        <button type="submit">Submit</button>
+        <div style="color:red; font-size: larger; display: flex; justify-content: center; align-items: center; margin-top: 1rem;"
+             th:if="${errorMessage}" class="error"
+             th:text="${errorMessage}"></div>
+        <div style="color:red; font-size: larger; display: flex; justify-content: center; align-items: center; margin-top: 1rem;"
+             th:if="${successMessage}" class="error"
+             th:text="${successMessage}"></div>
+    </form>
+</div>
+
+<script>
+    document.getElementById('NoOfTeachingAssignments').addEventListener('input', function () {
+        let numAssignments = parseInt(this.value);
+        let assignmentsDiv = document.getElementById('teachingAssignments');
+        assignmentsDiv.innerHTML = '';
+        for (let i = 0; i < numAssignments; i++) {
+            let label = document.createElement('label');
+            label.textContent = 'Subject for Teaching Assignment ' + (i + 1) + ': ';
+            let input = document.createElement('input');
+            input.type = 'text';
+            input.required;
+            input.name = 'subject_' + i;
+            input.required = true;
+            let br = document.createElement('br');
+            assignmentsDiv.appendChild(label);
+            assignmentsDiv.appendChild(input);
+            assignmentsDiv.appendChild(br);
+        }
+    });
+</script>
+</body>
+</html>
